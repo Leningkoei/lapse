@@ -1,0 +1,39 @@
+(do
+ (define! load
+   (lambda filename
+     (do
+       (define! read-port (open-input-file filename))
+       (define! content (read-from read-port))
+       (eval (read content)))))
+ (define! print
+   (lambda value
+     (write-to +stdout+ value)))
+ (define! map
+   (lambda function
+   (lambda list
+     (if (= list "")
+       ""
+       (cons (function (car list)) (map function (cdr list)))))))
+ (define! reduce
+   (lambda function
+   (lambda list
+   (lambda initialize
+     (if (= list "")
+       initialize
+       (reduce function (cdr list) (function initialize (car list))))))))
+ (define! concat
+   (lambda lista
+   (lambda listb
+     (if (= lista "")
+       listb
+       (cons (car lista) (concat (cdr lista) listb))))))
+ ;; (define! >-
+ ;;   (macro parameters
+ ;;   (macro body
+ ;;    (do
+ ;;     `(if (= ',parameters '())
+ ;;        '(,body)
+ ;;        (cons 'lambda
+ ;;          (cons ',(car parameters)
+ ;;            ((>- ,(cdr parameters) ,body)))))))))
+)
