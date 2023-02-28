@@ -53,7 +53,7 @@ eval environmentIORef (List [Atom (Symbol "macro"), parameter, body]) =
   where function :: LispFunction
         function argument = do --Error
           closure <- liftIO $ bindVariables environmentIORef [(parameter, argument)]
-          eval closure body >>= eval environmentIORef
+          eval closure body
 eval environmentIORef (List [Atom (Symbol "reference!"), List list]) =
   (eval environmentIORef $ List list) >>=
   getIORef environmentIORef >>= return . Atom . Reference
@@ -75,7 +75,7 @@ eval environmentIORef (List (functionName : arguments)) = do -- Error
     (Atom (Function _)) ->
       mapM (eval environmentIORef) arguments >>=
       apply function
-    (Atom (Macro _)) -> apply function arguments
+    (Atom (Macro _)) -> apply function arguments >>= eval environmentIORef
     other -> throwError . TODO $ "not function: " ++ show other
 eval environmentIORef symbol = get environmentIORef symbol
 

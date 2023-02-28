@@ -5,6 +5,19 @@
        (define! read-port (open-input-file filename))
        (define! content (read-from read-port))
        (eval (read content)))))
+ (define! >>=
+   (macro parameters
+   (macro body
+     (if (= parameters "")
+       body
+       `(macro ,(car parameters)
+          (>>= ,(cdr parameters) ,body))))))
+ (define! >-
+   (>>= (parameters body)
+     (if (= parameters "")
+       body
+       `(lambda ,(car parameters)
+          (>- ,(cdr parameters) ,body)))))
  (define! print
    (lambda value
      (write-to +stdout+ value)))
@@ -30,10 +43,8 @@
  ;; (define! >-
  ;;   (macro parameters
  ;;   (macro body
- ;;    (do
- ;;     `(if (= ',parameters '())
- ;;        '(,body)
- ;;        (cons 'lambda
- ;;          (cons ',(car parameters)
- ;;            ((>- ,(cdr parameters) ,body)))))))))
+ ;;    (if (= parameters "")
+ ;;      body
+ ;;      `(lambda ,(car parameters)
+ ;;         (>- ,(cdr parameters) ,body))))))
 )
