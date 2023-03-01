@@ -24,12 +24,17 @@
  (define! let
    (>>= (parameter argument body)
      `((lambda ,parameter ,body) ,argument)))
+ ;; (define! and
+ ;;   (macro first
+ ;;   (macro second
+ ;;     `(if ,first
+ ;;        ,second
+ ;;        ""))))
  (define! and
    (lambda first
-   (macro second
      (if first
-       second
-       ""))))
+       (macro second second)
+       (macro ignore '""))))
  (define! cons-pair
    (>- (car cdr)
      (cons car (cons cdr ""))))

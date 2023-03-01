@@ -163,3 +163,21 @@ executable step7
                        parsec
   hs-source-dirs:      src/step7
   default-language:    Haskell98
+
+executable step7-kai
+  main-is:             Main.hs
+  other-modules:       Interface,
+                       Type,
+                       Comparator,
+                       Environment,
+                       Reader,
+                       Printer,
+                       Evaluator,
+                       Core
+  -- other-extensions:
+  build-depends:       base >=4.12 && <4.13,
+                       mtl,
+                       readline,
+                       parsec
+  hs-source-dirs:      src/step7-kai
+  default-language:    Haskell98

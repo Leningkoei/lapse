@@ -12,7 +12,7 @@ import Interface
   )
 import Type ( LispFunction, LispValue(..), Atom (..), Environment, Error, LispError(..) )
 import Environment ( nullEnvironmentIOIORef, bindVariables )
-import Reader ( read )
+import Reader ( read, string2lispString )
 import Evaluator ( eval )
 import Printer ( lispValue2string )
 
@@ -36,7 +36,7 @@ core = [ (Atom $ Symbol "read", Atom $ Function Core.read)
        , (Atom $ Symbol "read-line-from", Atom $ Function lispReadLine)
        , (Atom $ Symbol "read-from", Atom $ Function lispRead)
        , (Atom $ Symbol "write-to", Atom $ Function lispWrite)
-       , (Atom $ Symbol "to-string", Atom $ Function toString)
+       , (Atom $ Symbol "to-string", Atom $ Function lispValue2lispString)
        ]
 
 coreEnvironmentIOIORef :: IO (IORef Environment)
@@ -131,8 +131,5 @@ lispWrite (Atom (Port port)) = return . Atom $ Function lispWrite'
           liftIO $ hPutStr port $ lispValue2string lispString
           return . Atom $ Symbol "true"
 
-toString :: LispFunction
-toString lispValue = do -- Error
-  lispString <- Reader.read $ "\"" ++ (show lispValue) ++ "\""
-  nullEnvironmentIORef <- liftIO nullEnvironmentIOIORef
-  Evaluator.eval nullEnvironmentIORef lispString
+lispValue2lispString :: LispFunction
+lispValue2lispString lispValue = return . string2lispString $ show lispValue
