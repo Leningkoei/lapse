@@ -15,12 +15,30 @@ build-type:          Simple
 extra-source-files:  CHANGELOG.md
 cabal-version:       >=1.10
 
+-- executable lapse
+--   main-is:             Main.hs
+--   -- other-modules:
+--   -- other-extensions:
+--   build-depends:       base >=4.12 && <4.13
+--   hs-source-dirs:      src
+--   default-language:    Haskell98
+
 executable lapse
   main-is:             Main.hs
-  -- other-modules:
+  other-modules:       Interface,
+                       Type,
+                       Comparator,
+                       Environment,
+                       Reader,
+                       Printer,
+                       Evaluator,
+                       Core
   -- other-extensions:
-  build-depends:       base >=4.12 && <4.13
-  hs-source-dirs:      src
+  build-depends:       base >=4.12 && <4.13,
+                       mtl,
+                       readline,
+                       parsec
+  hs-source-dirs:      src/lapse
   default-language:    Haskell98
 
 executable step0
