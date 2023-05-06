@@ -10,6 +10,8 @@ module Interface
   , Rational, numerator, denominator, (%)
   -- System.Console.Readline
   , readline
+  -- System.Environment
+  , getArgs
   -- System.IO
   , Handle, IOMode( ReadMode, WriteMode )
   , openFile, hClose, hGetLine, hGetContents, hPutStr, hPrint
@@ -29,6 +31,7 @@ import Control.Monad.Except ( ExceptT, liftIO, throwError, runExceptT )
 import Data.IORef ( IORef, newIORef, readIORef, writeIORef )
 import Data.Ratio ( Rational, numerator, denominator, (%) )
 import System.Console.Readline ( readline )
+import System.Environment ( getArgs )
 import System.IO
   ( Handle
   , IOMode ( ReadMode, WriteMode )

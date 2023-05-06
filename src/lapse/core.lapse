@@ -1,10 +1,27 @@
 (do
  (define! load
    (lambda filename
-     (do
-       (define! read-port (open-input-file filename))
-       (define! content (read-from read-port))
-       (eval (read content)))))
+     (eval (read (read-from (open-input-file filename))))))
+ (define! load
+   (macro filename
+     `(eval (read (read-from (open-input-file ,filename))))))
+ ;; (define! macro-map
+ ;;   (lambda macro
+ ;;   (lambda list
+ ;;     (if (= list "")
+ ;;       ""
+ ;;       (cons
+ ;;         ;; (macro (car list))
+ ;;         (eval (cons 'macro (cons (car list) "")))
+ ;;         (macro-map macro (cdr list)))))))
+ ;; (define! mqq
+ ;;   (macro target
+ ;;     (if (= target "") ""
+ ;;     (if (atom? target)
+ ;;       (cons 'quote (cons target ""))
+ ;;     (if (= (car target) 'muq)
+ ;;       (car (cdr target))
+ ;;       (cons 'quote (cons (macro-map mqq target) "")))))))
  (define! >>=
    (macro parameters
    (macro body
@@ -18,48 +35,74 @@
        body
        `(lambda ,(car parameters)
           (>- ,(cdr parameters) ,body)))))
- (define! print
+ (define! print!
    (lambda value
      (write-to +stdout+ value)))
  (define! let
    (>>= (parameter argument body)
      `((lambda ,parameter ,body) ,argument)))
+
+ ;; logic
  (define! and
    (lambda first
    (macro second
      (if first
        second
        '""))))
+ (define! not
+   (lambda value
+     (if value
+       ""
+       'true)))
+
+ ;; pair
  (define! cons-pair
    (>- (car cdr)
      (cons car (cons cdr ""))))
- (define! car-pair car)
- (define! cdr-pair
+ (define! pair-car car)
+ (define! pair-cdr
    (lambda pair (car (cdr pair))))
- (define! map
-   (lambda function
+ (define! pair-null "")
+ (define! pair-null? (lambda pair (not pair)))
+
+ ;; list
+ (define! length
    (lambda list
+     (let length*
+       (>- (this length rest-list)
+         (if (= rest-list "")
+           length
+           (this this (+ 1 length) (cdr rest-list))))
+       (length* length* 0 list))))
+ (define! append
+   (lambda element
+   (lambda list
+     (reverse (cons element (reverse list))))))
+ (define! reverse
+   (lambda list
+     (do
+      (define! reverse
+        (lambda accumulator
+        (lambda rest-list
+          (if (= rest-list "")
+            accumulator
+            (reverse
+              (cons (car rest-list) accumulator)
+              (cdr rest-list))))))
+      (reverse "" list))))
+ (define! map
+   (>- (function list)
      (if (= list "")
        ""
-       (cons (function (car list)) (map function (cdr list)))))))
+       (cons (function (car list)) (map function (cdr list))))))
  (define! reduce
-   (lambda function
-   (lambda list
-   (lambda initialize
+   (>- (function list initialize)
      (if (= list "")
        initialize
-       (reduce function (cdr list) (function initialize (car list))))))))
+       (reduce function (cdr list) (function initialize (car list))))))
  (define! concat
-   (lambda lista
-   (lambda listb
+   (>- (lista listb)
      (if (= lista "")
        listb
-       (cons (car lista) (concat (cdr lista) listb))))))
- ;; (define! >-
- ;;   (macro parameters
- ;;   (macro body
- ;;    (if (= parameters "")
- ;;      body
- ;;      `(lambda ,(car parameters)
- ;;         (>- ,(cdr parameters) ,body))))))
+       (cons (car lista) (concat (cdr lista) listb)))))
 )

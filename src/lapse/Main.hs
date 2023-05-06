@@ -1,6 +1,6 @@
 module Main where
 
-import Interface ( IORef, readline )
+import Interface ( IORef, readline, getArgs )
 import Type ( Environment )
 import Reader ( read )
 import Printer ( print )
@@ -21,12 +21,16 @@ repl environmentIORef = do
     Just "" -> repl environmentIORef
     Just string -> (rep environmentIORef string >>= putStrLn) >> repl environmentIORef
 
--- load stdlib
-loadSTDLIB :: String
-loadSTDLIB = "(eval (read (read-from (open-input-file \"src/step7-kai/core.lapse\"))))"
-
 main :: IO ()
 main = do -- IO
+  putStrLn "Welcome to lapse version 1.0.0."
+  args <- getArgs
   coreEnvironmentIORef <- coreEnvironmentIOIORef
-  rep coreEnvironmentIORef loadSTDLIB
+  let loads = map function args
+  mapM (rep coreEnvironmentIORef) loads
   repl coreEnvironmentIORef
+  putStrLn "Goodbye."
+  where function :: String -> String
+        function path =
+          "(eval (read (read-from (open-input-file \"" ++
+          path ++ "\"))))"

@@ -66,10 +66,13 @@ bindVariables environmentIORef bindings = foldM bindVariable environmentIORef bi
 
 define :: IORef Environment -> LispValue -> LispValue -> Error LispValue
 define environmentIORef variableName value = do -- Error
-  alreadyDefined <- liftIO $ isBound environmentIORef variableName
-  if alreadyDefined
-    then set environmentIORef variableName value
-    else liftIO $ do
-      bindVariable environmentIORef (variableName, value) >>=
-        readIORef >>= writeIORef environmentIORef
-      return value
+  -- alreadyDefined <- liftIO $ isBound environmentIORef variableName
+  -- if alreadyDefined
+  --   then set environmentIORef variableName value
+  --   else liftIO $ do
+  --     bindVariable environmentIORef (variableName, value) >>=
+  --       readIORef >>= writeIORef environmentIORef
+  --     return value
+  liftIO $ bindVariable environmentIORef (variableName, value) >>=
+    readIORef >>= writeIORef environmentIORef
+  return value
